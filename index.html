@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Which Secret Operative Are You?</title>
+  <style>
+    body {
+      background-color: #0a0a0a;
+      color: #f8f8f2;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 2rem;
+    }
+    h1 {
+      color: #ff5555;
+      text-align: center;
+    }
+    .question {
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      margin: 0.3rem 0;
+    }
+    .result {
+      margin-top: 2rem;
+      padding: 1rem;
+      border: 1px solid #444;
+      background-color: #1a1a1a;
+    }
+    button {
+      background: #ff5555;
+      border: none;
+      padding: 0.5rem 1rem;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    button:hover {
+      background: #ff7777;
+    }
+  </style>
+</head>
+<body>
+  <h1>Which Secret Operative Are You?</h1>
+  <form id="quizForm"></form>
+  <div id="result" class="result"></div>
+  <script>
+    const questions = [
+      "I like to understand how things work before I use them.",
+      "I learn best by doing, not by being told.",
+      "I question things even when I know it's going to piss people off.",
+      "I’m good at seeing connections others miss.",
+      "In a crisis, I lock in — not freak out.",
+      "I can shut off my emotions when something needs to get done.",
+      "I replay stressful situations to analyze them after the fact.",
+      "I like having control — chaos throws me off my game.",
+      "I can charm almost anyone if I need to.",
+      "I adjust how I speak depending on who I’m with.",
+      "I often spot emotional tension before anyone else does.",
+      "I naturally play mediator — I see all sides.",
+      "I’d rather take a risky shot than wait and miss my window.",
+      "I think rules are more like guidelines — flexible when necessary.",
+      "I’m okay being the bad guy if the outcome is right.",
+      "I follow my gut even when it goes against popular opinion.",
+      "I often ask, 'What the hell am I even doing here?'",
+      "I crave experiences that shake me up and force me to grow.",
+      "I’m driven by the need to make meaning, not just money.",
+      "I can hold contradictory beliefs and still function just fine."
+    ];
+
+    const traits = {
+      cognitive: [0, 1, 2, 3],
+      stress: [4, 5, 6, 7],
+      social: [8, 9, 10, 11],
+      risk: [12, 13, 14, 15],
+      identity: [16, 17, 18, 19]
+    };
+
+    const titles = {
+      handler: () => '🧠 The Handler-Architect — A master manipulator of meaning and empathy. You’re strategic, sharp, and soulful. You read rooms like novels and write destinies.',
+      operator: () => '💣 The Operator — Tough, focused, and resilient under pressure. You thrive in chaos and get shit done no matter what.',
+      analyst: () => '📊 The Analyst — Pattern-seeking introvert with a knack for solving invisible problems. You’re the brain behind the curtain.',
+      disruptor: () => '🔥 The Disruptor — You challenge rules, rewrite missions, and break old systems to build new ones. Rogue visionary.',
+      front: () => '🎭 The Front — Charismatic, fast-talking, and socially adaptive. You influence outcomes through people, not spreadsheets.'
+    };
+
+    const form = document.getElementById('quizForm');
+    questions.forEach((q, i) => {
+      const div = document.createElement('div');
+      div.className = 'question';
+      div.innerHTML = `<label>${i + 1}. ${q}</label>`;
+      for (let j = 1; j <= 5; j++) {
+        div.innerHTML += `<label><input type="radio" name="q${i}" value="${j}" required /> ${j}</label>`;
+      }
+      form.appendChild(div);
+    });
+
+    const submit = document.createElement('button');
+    submit.innerText = 'Get Your Operative Title';
+    submit.type = 'submit';
+    form.appendChild(submit);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      let scores = { cognitive: 0, stress: 0, social: 0, risk: 0, identity: 0 };
+
+      for (let [key, value] of data.entries()) {
+        let i = parseInt(key.slice(1));
+        let v = parseInt(value);
+        for (let t in traits) {
+          if (traits[t].includes(i)) scores[t] += v;
+        }
+      }
+
+      let result = '';
+      if (scores.social >= 17 && scores.identity >= 17) result = titles.handler();
+      else if (scores.stress >= 17 && scores.risk >= 17) result = titles.operator();
+      else if (scores.cognitive >= 17 && scores.social < 12) result = titles.analyst();
+      else if (scores.risk >= 17 && scores.identity >= 17) result = titles.disruptor();
+      else if (scores.social >= 18 && scores.cognitive < 14) result = titles.front();
+      else result = titles.handler(); // fallback archetype
+
+      document.getElementById('result').innerText = result;
+    });
+  </script>
+</body>
+</html>
